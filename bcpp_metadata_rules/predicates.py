@@ -17,7 +17,7 @@ class Predicates(PredicateCollection):
         """Returns True if circumcised before or at visit
         report datetime.
         """
-        return self.exists(
+        return self.exists_for_value(
             model='circumcision',
             identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
@@ -27,6 +27,11 @@ class Predicates(PredicateCollection):
     def is_hic_enrolled(self, visit):
         """Returns True if subject is enrolled to Hic.
         """
+        return self.exists(
+            model='hicenrollment',
+            identifier=visit.subject_identifier,
+            report_datetime__lte=visit.report_datetime)
+
         model_cls = self.get_model('hicenrollment')
         try:
             model_cls.objects.get(
