@@ -1,0 +1,4 @@
+from edc_reference.utils import register_from_visit_schedule
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
+
+register_from_visit_schedule(site_visit_schedules=site_visit_schedules)

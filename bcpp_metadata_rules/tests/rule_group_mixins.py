@@ -1,9 +1,7 @@
 from model_mommy import mommy
 
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
-
-from ..constants import MICROTUBE
-
+from bcpp_lab.constants import MICROTUBE
 from edc_constants.constants import NO, YES
 
 

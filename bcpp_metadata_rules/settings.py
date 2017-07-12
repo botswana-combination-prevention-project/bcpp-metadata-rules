@@ -11,10 +11,13 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
+
+from edc_device.constants import CENTRAL_SERVER
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+APP_NAME = 'bcpp_metadata_rules'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -37,6 +40,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crypto_fields.apps.AppConfig',
+    'django_revision.apps.AppConfig',
+    'edc_base.apps.AppConfig',
+    'edc_appointment.apps.AppConfig',
+    'edc_visit_tracking.apps.AppConfig',
+    'edc_visit_schedule.apps.AppConfig',
+    'edc_protocol.apps.AppConfig',
+    'edc_identifier.apps.AppConfig',
+    'edc_timepoint.apps.AppConfig',
+    'edc_device.apps.AppConfig',
+    'edc_registration.apps.AppConfig',
+    'edc_reference.apps.AppConfig',
+    'bcpp_labs.apps.AppConfig',
+    'bcpp_status.apps.AppConfig',
+    'bcpp_visit_schedule.apps.AppConfig',
+    'bcpp_metadata_rules.apps.EdcMetadataAppConfig',
     'bcpp_metadata_rules.apps.AppConfig',
 ]
 
@@ -117,5 +136,33 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+KEY_PATH = os.path.join(BASE_DIR, 'crypto_fields')
+GIT_DIR = BASE_DIR
+
+ANONYMOUS_SURVEY = 'anonymous'
+ANONYMOUS_ENABLED = True
+CURRENT_MAP_AREA = 'test_community'
+DEVICE_ID = '99'
+DEVICE_ROLE = CENTRAL_SERVER
+SURVEY_GROUP_NAME = 'test_survey'
+SURVEY_SCHEDULE_NAME = 'year-1'
+
+VISIT_SCHEDULE_APP_LABEL = APP_NAME
+
+
+if 'test' in sys.argv:
+
+    class DisableMigrations:
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return None
+
+    MIGRATION_MODULES = DisableMigrations()
+    PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher', )
+    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
