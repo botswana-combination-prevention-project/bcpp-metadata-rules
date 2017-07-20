@@ -12,11 +12,14 @@ from edc_reference.tests import ReferenceTestHelper
 from edc_reference import LongitudinalRefset
 from pprint import pprint
 from edc_registration.models import RegisteredSubject
+from edc_reference.models import Reference
+from bcpp_status.status_helper import StatusHelper
+from bcpp_status.tests import StatusHelperTestMixin
 
 MICROTUBE = 'Microtube'
 
 
-class TestPredicates(TestCase):
+class TestPredicates(StatusHelperTestMixin, TestCase):
 
     reference_helper_cls = ReferenceTestHelper
     visit_model = 'bcpp_subject.subjectvisit'
@@ -243,3 +246,66 @@ class TestPredicates(TestCase):
             self.subject_visits[1]))
         self.assertFalse(pc.func_requires_third_partner_forms(
             self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_hivlinkagetocare(self):
+        pc = Predicates()
+        self.assertFalse(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_hivlinkagetocare_defaulter_baseline(self):
+        pc = Predicates()
+        self.assertFalse(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[0]))
+        self.prepare_art_status(visit=self.subject_visits[0], defaulter=True)
+        self.assertTrue(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[0]))
+        self.assertTrue(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[1]))
+        self.assertTrue(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_hivlinkagetocare_naive_baseline(self):
+        pc = Predicates()
+        self.assertFalse(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[0]))
+
+        self.prepare_art_status(visit=self.subject_visits[0], naive=True)
+
+        self.assertTrue(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[0]))
+        self.assertTrue(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[1]))
+        self.assertTrue(pc.func_requires_hivlinkagetocare(
+            self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_art_defaulter(self):
+        pc = Predicates()
+        self.assertFalse(pc.func_art_defaulter(self.subject_visits[0]))
+        self.assertFalse(pc.func_art_defaulter(self.subject_visits[1]))
+        self.assertFalse(pc.func_art_defaulter(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_art_defaulter_true1(self):
+        pc = Predicates()
+        self.prepare_art_status(visit=self.subject_visits[0], defaulter=True)
+        self.assertTrue(pc.func_art_defaulter(self.subject_visits[0]))
+        self.assertTrue(pc.func_art_defaulter(self.subject_visits[1]))
+        self.assertTrue(pc.func_art_defaulter(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_art_defaulter_true2(self):
+        pc = Predicates()
+
+        self.prepare_art_status(visit=self.subject_visits[1], defaulter=True)
+        self.prepare_art_status(visit=self.subject_visits[2], defaulter=True)
+        self.assertFalse(pc.func_art_defaulter(self.subject_visits[0]))
+        self.assertTrue(pc.func_art_defaulter(self.subject_visits[1]))
+        self.assertTrue(pc.func_art_defaulter(self.subject_visits[2]))
