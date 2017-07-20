@@ -6,10 +6,12 @@ from arrow.arrow import Arrow
 from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 
-from edc_constants.constants import NEG, POS, UNK, YES, IND, NAIVE, NO
+from edc_constants.constants import NEG, POS, UNK, YES, IND, NAIVE, NO, MALE,\
+    FEMALE
 from edc_reference.tests import ReferenceTestHelper
 from edc_reference import LongitudinalRefset
 from pprint import pprint
+from edc_registration.models import RegisteredSubject
 
 MICROTUBE = 'Microtube'
 
@@ -100,7 +102,7 @@ class TestPredicates(TestCase):
         self.assertTrue(pc.is_circumcised(self.subject_visits[1]))
 
     @tag('1')
-    def test_is_hic_enrolled(self):
+    def test_is_hic_enrolled_yes(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
@@ -108,3 +110,136 @@ class TestPredicates(TestCase):
             visit_code=self.subject_visits[0].visit_code,
             hic_permission=YES)
         self.assertTrue(pc.is_hic_enrolled(self.subject_visits[0]))
+        self.assertTrue(pc.is_hic_enrolled(self.subject_visits[1]))
+        self.assertTrue(pc.is_hic_enrolled(self.subject_visits[2]))
+
+    @tag('1')
+    def test_is_hic_enrolled_no(self):
+        pc = Predicates()
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='hicenrollment',
+            visit_code=self.subject_visits[0].visit_code,
+            hic_permission=NO)
+        self.assertFalse(pc.is_hic_enrolled(self.subject_visits[0]))
+        self.assertFalse(pc.is_hic_enrolled(self.subject_visits[1]))
+        self.assertFalse(pc.is_hic_enrolled(self.subject_visits[2]))
+
+    @tag('1')
+    def test_is_hic_enrolled_nonoe(self):
+        pc = Predicates()
+        self.assertFalse(pc.is_hic_enrolled(self.subject_visits[0]))
+        self.assertFalse(pc.is_hic_enrolled(self.subject_visits[1]))
+        self.assertFalse(pc.is_hic_enrolled(self.subject_visits[2]))
+
+    @tag('1')
+    def test_is_female(self):
+        rs = RegisteredSubject.objects.create(
+            subject_identifier=self.subject_identifier,
+            gender=MALE)
+        for gender in [MALE, FEMALE]:
+            with self.subTest(gender=gender):
+                pc = Predicates()
+                rs.gender = gender
+                rs.save()
+                if gender == MALE:
+                    self.assertFalse(pc.func_is_female(self.subject_visits[0]))
+                    self.assertFalse(pc.func_is_female(self.subject_visits[1]))
+                    self.assertFalse(pc.func_is_female(self.subject_visits[2]))
+                elif gender == FEMALE:
+                    self.assertTrue(pc.func_is_female(self.subject_visits[0]))
+                    self.assertTrue(pc.func_is_female(self.subject_visits[1]))
+                    self.assertTrue(pc.func_is_female(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_recent_partner_0(self):
+        pc = Predicates()
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='sexualbehaviour',
+            visit_code=self.subject_visits[0].visit_code,
+            last_year_partners=0)
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[2]))
+
+    @tag('1')
+    def func_requires_recent_partner_1(self):
+        pc = Predicates()
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='sexualbehaviour',
+            visit_code=self.subject_visits[0].visit_code,
+            last_year_partners=1)
+
+        self.assertTrue(pc.func_requires_recent_partner(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[2]))
+
+        self.assertFalse(pc.func_requires_second_partner_forms(
+            self.subject_visits[0]))
+
+        self.assertFalse(pc.func_requires_third_partnerforms(
+            self.subject_visits[0]))
+
+    @tag('1')
+    def test_func_requires_partner_2(self):
+        pc = Predicates()
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='sexualbehaviour',
+            visit_code=self.subject_visits[0].visit_code,
+            last_year_partners=2)
+
+        self.assertTrue(pc.func_requires_recent_partner(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[2]))
+
+        self.assertTrue(pc.func_requires_second_partner_forms(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_second_partner_forms(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_second_partner_forms(
+            self.subject_visits[2]))
+
+        self.assertFalse(pc.func_requires_third_partner_forms(
+            self.subject_visits[0]))
+
+    @tag('1')
+    def test_func_requires_partner_3(self):
+        pc = Predicates()
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='sexualbehaviour',
+            visit_code=self.subject_visits[0].visit_code,
+            last_year_partners=3)
+
+        self.assertTrue(pc.func_requires_recent_partner(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_recent_partner(
+            self.subject_visits[2]))
+
+        self.assertTrue(pc.func_requires_second_partner_forms(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_second_partner_forms(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_second_partner_forms(
+            self.subject_visits[2]))
+
+        self.assertTrue(pc.func_requires_third_partner_forms(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_third_partner_forms(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_third_partner_forms(
+            self.subject_visits[2]))

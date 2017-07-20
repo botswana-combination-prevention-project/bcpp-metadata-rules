@@ -7,6 +7,7 @@ from edc_registration.models import RegisteredSubject
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
 from bcpp_status.status_helper import StatusHelper
+from pprint import pprint
 
 
 class Predicates(PredicateCollection):
@@ -40,29 +41,41 @@ class Predicates(PredicateCollection):
             subject_identifier=visit.subject_identifier)
         return registered_subject.gender == FEMALE
 
+    def _has_last_year_partners(self, visit, partner_count=None):
+        values = self.exists(
+            model='sexualbehaviour',
+            subject_identifier=visit.subject_identifier,
+            report_datetime=visit.report_datetime,
+            field_name='last_year_partners')
+        try:
+            return (values[0] or 0) >= partner_count
+        except IndexError:
+            return False
+
     def func_requires_recent_partner(self, visit, **kwargs):
-        model_cls = self.get_model('sexualbehaviour')
-        sexual_behaviour = model_cls.objects.get(
-            subject_visit=visit)
-        if sexual_behaviour.last_year_partners:
-            return True if int(sexual_behaviour.last_year_partners) >= 1 else False
-        return False
+        return self._has_last_year_partners(visit, partner_count=1)
 
     def func_requires_second_partner_forms(self, visit, **kwargs):
-        model_cls = self.get_model('sexualbehaviour')
-        sexual_behaviour = model_cls.objects.get(
-            subject_visit=visit)
-        if sexual_behaviour.last_year_partners:
-            return True if int(sexual_behaviour.last_year_partners) >= 2 else False
-        return False
+        return self._has_last_year_partners(visit, partner_count=2)
 
     def func_requires_third_partner_forms(self, visit, **kwargs):
-        model_cls = self.get_model('sexualbehaviour')
-        sexual_behaviour = model_cls.objects.get(
-            subject_visit=visit)
-        if sexual_behaviour.last_year_partners:
-            return True if int(sexual_behaviour.last_year_partners) >= 3 else False
-        return False
+        return self._has_last_year_partners(visit, partner_count=3)
+
+#     def func_requires_second_partner_forms(self, visit, **kwargs):
+#         model_cls = self.get_model('sexualbehaviour')
+#         sexual_behaviour = model_cls.objects.get(
+#             subject_visit=visit)
+#         if sexual_behaviour.last_year_partners:
+#             return True if int(sexual_behaviour.last_year_partners) >= 2 else False
+#         return False
+#
+#     def func_requires_third_partner_forms(self, visit, **kwargs):
+#         model_cls = self.get_model('sexualbehaviour')
+#         sexual_behaviour = model_cls.objects.get(
+#             subject_visit=visit)
+#         if sexual_behaviour.last_year_partners:
+#             return True if int(sexual_behaviour.last_year_partners) >= 3 else False
+#         return False
 
     def func_requires_hivlinkagetocare(self, visit, **kwargs):
         """Returns True is a participant is a defaulter now or at baseline,
