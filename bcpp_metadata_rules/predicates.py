@@ -78,6 +78,7 @@ class Predicates(PredicateCollection):
 
     def func_requires_hivuntested(self, visit, **kwargs):
         """Only for ESS."""
+        # FIXME: make for ESS only
         return self.exists(
             model='hivtestinghistory',
             subject_identifier=visit.subject_identifier,
@@ -87,6 +88,7 @@ class Predicates(PredicateCollection):
 
     def func_requires_hivtestreview(self, visit, **kwargs):
         """Only for ESS."""
+        # FIXME: make for ESS only
         return self.exists(
             model='hivtestinghistory',
             subject_identifier=visit.subject_identifier,

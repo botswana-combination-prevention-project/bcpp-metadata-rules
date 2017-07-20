@@ -50,7 +50,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.assertFalse(pc.is_circumcised(self.subject_visits[0]))
 
-    @tag('1')
     def test_is_circumcised_baseline_yes(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -60,7 +59,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             circumcised=YES)
         self.assertTrue(pc.is_circumcised(self.subject_visits[0]))
 
-    @tag('1')
     def test_is_circumcised_baseline_no(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -70,7 +68,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             circumcised=NO)
         self.assertFalse(pc.is_circumcised(self.subject_visits[0]))
 
-    @tag('1')
     def test_is_circumcised_baseline_no_t1_yes(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -86,7 +83,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.is_circumcised(self.subject_visits[0]))
         self.assertTrue(pc.is_circumcised(self.subject_visits[1]))
 
-    @tag('1')
     def test_is_circumcised_baseline_yes_t1_no(self):
         """Assert any YES returns True.
         """
@@ -104,7 +100,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.is_circumcised(self.subject_visits[0]))
         self.assertTrue(pc.is_circumcised(self.subject_visits[1]))
 
-    @tag('1')
     def test_is_hic_enrolled_yes(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -116,7 +111,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.is_hic_enrolled(self.subject_visits[1]))
         self.assertTrue(pc.is_hic_enrolled(self.subject_visits[2]))
 
-    @tag('1')
     def test_is_hic_enrolled_no(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -128,14 +122,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.is_hic_enrolled(self.subject_visits[1]))
         self.assertFalse(pc.is_hic_enrolled(self.subject_visits[2]))
 
-    @tag('1')
     def test_is_hic_enrolled_nonoe(self):
         pc = Predicates()
         self.assertFalse(pc.is_hic_enrolled(self.subject_visits[0]))
         self.assertFalse(pc.is_hic_enrolled(self.subject_visits[1]))
         self.assertFalse(pc.is_hic_enrolled(self.subject_visits[2]))
 
-    @tag('1')
     def test_is_female(self):
         rs = RegisteredSubject.objects.create(
             subject_identifier=self.subject_identifier,
@@ -154,7 +146,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
                     self.assertTrue(pc.func_is_female(self.subject_visits[1]))
                     self.assertTrue(pc.func_is_female(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_recent_partner_none(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_recent_partner(
@@ -164,7 +155,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_recent_partner(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_recent_partner_0(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -179,7 +169,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_recent_partner(
             self.subject_visits[2]))
 
-    @tag('1')
     def func_requires_recent_partner_1(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -201,7 +190,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_third_partnerforms(
             self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_partner_2(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -227,7 +215,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_third_partner_forms(
             self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_partner_3(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -257,7 +244,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_third_partner_forms(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_hivlinkagetocare(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_hivlinkagetocare(
@@ -267,7 +253,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_hivlinkagetocare(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_hivlinkagetocare_defaulter_baseline(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_hivlinkagetocare(
@@ -280,7 +265,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_requires_hivlinkagetocare(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_hivlinkagetocare_naive_baseline(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_hivlinkagetocare(
@@ -295,14 +279,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_requires_hivlinkagetocare(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_art_defaulter(self):
         pc = Predicates()
         self.assertFalse(pc.func_art_defaulter(self.subject_visits[0]))
         self.assertFalse(pc.func_art_defaulter(self.subject_visits[1]))
         self.assertFalse(pc.func_art_defaulter(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_art_defaulter_true1(self):
         pc = Predicates()
         self.prepare_art_status(visit=self.subject_visits[0], defaulter=True)
@@ -310,7 +292,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_art_defaulter(self.subject_visits[1]))
         self.assertTrue(pc.func_art_defaulter(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_art_defaulter_true2(self):
         pc = Predicates()
 
@@ -320,14 +301,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_art_defaulter(self.subject_visits[1]))
         self.assertTrue(pc.func_art_defaulter(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_art_naive(self):
         pc = Predicates()
         self.assertFalse(pc.func_art_naive(self.subject_visits[0]))
         self.assertFalse(pc.func_art_naive(self.subject_visits[1]))
         self.assertFalse(pc.func_art_naive(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_art_naive_true1(self):
         pc = Predicates()
         self.prepare_art_status(visit=self.subject_visits[0], naive=True)
@@ -335,7 +314,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_art_naive(self.subject_visits[1]))
         self.assertTrue(pc.func_art_naive(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_art_naive_true2(self):
         pc = Predicates()
         self.prepare_art_status(visit=self.subject_visits[1], naive=True)
@@ -344,14 +322,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_art_naive(self.subject_visits[1]))
         self.assertTrue(pc.func_art_naive(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_on_art(self):
         pc = Predicates()
         self.assertFalse(pc.func_on_art(self.subject_visits[0]))
         self.assertFalse(pc.func_on_art(self.subject_visits[1]))
         self.assertFalse(pc.func_on_art(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_on_art_true1(self):
         pc = Predicates()
         self.prepare_art_status(visit=self.subject_visits[0], on_art=True)
@@ -359,7 +335,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_on_art(self.subject_visits[1]))
         self.assertTrue(pc.func_on_art(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_on_art_true2(self):
         pc = Predicates()
         self.prepare_art_status(visit=self.subject_visits[1], on_art=True)
@@ -368,7 +343,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_on_art(self.subject_visits[1]))
         self.assertTrue(pc.func_on_art(self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_todays_hiv_result(self):
         pc = Predicates()
         self.assertTrue(pc.func_requires_todays_hiv_result(
@@ -378,7 +352,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_requires_todays_hiv_result(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_todays_hiv_result1(self):
         pc = Predicates()
         self.prepare_hiv_status(visit=self.subject_visits[0], result=NEG)
@@ -389,7 +362,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_requires_todays_hiv_result(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_todays_hiv_result2(self):
         pc = Predicates()
         self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
@@ -400,14 +372,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_todays_hiv_result(
             self.subject_visits[2]))
 
-    @tag('1')
     def test_func_requires_pima_cd4(self):
         pc = Predicates()
         self.prepare_art_status(
             visit=self.subject_visits[0], naive=True, result=POS)
         self.assertTrue(pc.func_requires_pima_cd4(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_pima_cd4_1(self):
         pc = Predicates()
         self.prepare_art_status(
@@ -415,7 +385,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_requires_pima_cd4(self.subject_visits[0]))
         self.assertTrue(pc.func_requires_pima_cd4(self.subject_visits[1]))
 
-    @tag('1')
     def test_func_requires_pima_cd4_2(self):
         pc = Predicates()
         self.prepare_art_status(
@@ -423,7 +392,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[0]))
         self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[1]))
 
-    @tag('1')
     def test_func_requires_pima_cd4_3(self):
         pc = Predicates()
         self.prepare_art_status(
@@ -431,32 +399,27 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[0]))
         self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[1]))
 
-    @tag('1')
     def test_func_known_hiv_pos(self):
         pc = Predicates()
         self.prepare_known_positive(visit=self.subject_visits[0])
         self.assertTrue(pc.func_known_hiv_pos(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_vl(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_vl(self.subject_visits[0]))
         self.prepare_known_positive(visit=self.subject_visits[0])
         self.assertTrue(pc.func_requires_vl(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_rbd(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_rbd(self.subject_visits[0]))
         self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
         self.assertTrue(pc.func_requires_rbd(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hivuntested(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_hivuntested(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hivuntested2(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -466,13 +429,11 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             has_tested=NO)
         self.assertTrue(pc.func_requires_hivuntested(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hivtestreview(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_hivtestreview(
             self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hivtestreview2(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -482,12 +443,10 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             has_record=YES)
         self.assertTrue(pc.func_requires_hivtestreview(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_anonymous_member(self):
         pc = Predicates()
         self.assertFalse(pc.func_anonymous_member(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_anonymous_member1(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -497,7 +456,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             consent_datetime=self.subject_visits[0].report_datetime)
         self.assertTrue(pc.func_anonymous_member(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_circumcision_male(self):
         RegisteredSubject.objects.create(
             subject_identifier=self.subject_identifier,
@@ -507,7 +465,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
         self.assertTrue(pc.func_requires_circumcision(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_circumcision_female(self):
         RegisteredSubject.objects.create(
             subject_identifier=self.subject_identifier,
@@ -517,12 +474,10 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
         self.assertFalse(pc.func_requires_circumcision(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_microtube(self):
         pc = Predicates()
         self.assertTrue(pc.func_requires_microtube(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_microtube1(self):
         pc = Predicates()
         # hivtestreview
@@ -534,7 +489,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
         self.assertTrue(pc.func_requires_microtube(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_microtube2(self):
         pc = Predicates()
         # hivtestreview
@@ -546,19 +500,16 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
         self.assertFalse(pc.func_requires_microtube(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_microtube3(self):
         pc = Predicates()
         self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
         self.assertFalse(pc.func_requires_microtube(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_hiv_positive(self):
         pc = Predicates()
         self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
         self.assertTrue(pc.func_hiv_positive(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_venous1(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -570,7 +521,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             reason_not_drawn='collection_failed')
         self.assertTrue(pc.func_requires_venous(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_venous2(self):
         pc = Predicates()
         self.reference_helper.create_for_model(
@@ -582,13 +532,11 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             reason_not_drawn=None)
         self.assertFalse(pc.func_requires_venous(self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hic_enrollment(self):
         pc = Predicates()
         self.assertFalse(pc.func_requires_hic_enrollment(
             self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hic_enrollment2(self):
         pc = Predicates()
         self.reference_helper.update_for_model(
@@ -600,7 +548,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertTrue(pc.func_requires_hic_enrollment(
             self.subject_visits[0]))
 
-    @tag('1')
     def test_func_requires_hic_enrollment3(self):
         pc = Predicates()
         self.reference_helper.update_for_model(
