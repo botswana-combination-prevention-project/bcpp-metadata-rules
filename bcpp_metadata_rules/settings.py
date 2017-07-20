@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'edc_registration.apps.AppConfig',
     'edc_reference.apps.AppConfig',
     'bcpp_labs.apps.AppConfig',
+    'bcpp_reference.apps.AppConfig',
     'bcpp_status.apps.AppConfig',
     'bcpp_visit_schedule.apps.AppConfig',
     'bcpp_metadata_rules.apps.EdcMetadataAppConfig',

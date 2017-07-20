@@ -3,7 +3,6 @@ from django.test.testcases import TestCase
 from edc_constants.constants import YES, NO, MALE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 
-# from .models import HiveCareAdherence
 from edc_appointment.models import Appointment
 from edc_registration.models import RegisteredSubject
 from edc_metadata.models import CrfMetadata
@@ -11,8 +10,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import SCHEDULED
 from pprint import pprint
 
-from .models import SubjectVisit, EnrollmentBhs
-from bcpp_metadata_rules.tests.models import HouseholdMember
+from .models import SubjectVisit, EnrollmentBhs, HouseholdMember
 
 
 class TestMetadataRules(TestCase):

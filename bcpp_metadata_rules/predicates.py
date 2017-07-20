@@ -12,14 +12,15 @@ from bcpp_status.status_helper import StatusHelper
 class Predicates(PredicateCollection):
 
     app_label = 'bcpp_subject'
+    visit_model = 'bcpp_subject.subjectvisit'
 
     def is_circumcised(self, visit):
         """Returns True if circumcised before or at visit
         report datetime.
         """
-        return self.exists_for_value(
+        return self.values(
             model='circumcision',
-            identifier=visit.subject_identifier,
+            subject_identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
             field_name='circumcised',
             value=YES)
@@ -29,17 +30,10 @@ class Predicates(PredicateCollection):
         """
         return self.exists(
             model='hicenrollment',
-            identifier=visit.subject_identifier,
-            report_datetime__lte=visit.report_datetime)
-
-        model_cls = self.get_model('hicenrollment')
-        try:
-            model_cls.objects.get(
-                subject_visit__subject_identifier=visit.subject_identifier,
-                hic_permission=YES)
-            return True
-        except ObjectDoesNotExist:
-            return False
+            subject_identifier=visit.subject_identifier,
+            report_datetime__lte=visit.report_datetime,
+            field_name='hic_permission',
+            value=YES)
 
     def func_is_female(self, visit, **kwargs):
         registered_subject = RegisteredSubject.objects.get(
