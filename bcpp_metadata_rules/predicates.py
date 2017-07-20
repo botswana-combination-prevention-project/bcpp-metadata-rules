@@ -1,5 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
-
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_metadata.rules import PredicateCollection
 from edc_registration.models import RegisteredSubject
@@ -7,7 +5,6 @@ from edc_registration.models import RegisteredSubject
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
 from bcpp_status.status_helper import StatusHelper
-from pprint import pprint
 
 
 class Predicates(PredicateCollection):
@@ -19,7 +16,7 @@ class Predicates(PredicateCollection):
         """Returns True if circumcised before or at visit
         report datetime.
         """
-        return self.values(
+        return self.exists(
             model='circumcision',
             subject_identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
@@ -47,10 +44,7 @@ class Predicates(PredicateCollection):
             subject_identifier=visit.subject_identifier,
             report_datetime=visit.report_datetime,
             field_name='last_year_partners')
-        try:
-            return (values[0] or 0) >= partner_count
-        except IndexError:
-            return False
+        return (values[0] or 0) >= partner_count
 
     def func_requires_recent_partner(self, visit, **kwargs):
         return self._has_last_year_partners(visit, partner_count=1)
@@ -62,54 +56,50 @@ class Predicates(PredicateCollection):
         return self._has_last_year_partners(visit, partner_count=3)
 
     def func_requires_venous(self, visit, **kwargs):
-        model_cls = self.get_model('subjectrequisition')
-        try:
-            model_cls.objects.get(
-                is_drawn=NO,
-                panel_name=MICROTUBE,
-                subject_visit=visit,
-                reason_not_drawn='collection_failed')
-        except model_cls.DoesNotExist:
-            pass
-        else:
-            return True
-        return False
+        panel_name = self.exists(
+            model='subjectrequisition',
+            subject_identifier=visit.subject_identifier,
+            report_datetime=visit.report_datetime,
+            field_name='panel_name',
+            value=MICROTUBE)
+        is_drawn = self.exists(
+            model='subjectrequisition',
+            subject_identifier=visit.subject_identifier,
+            report_datetime=visit.report_datetime,
+            field_name='is_drawn',
+            value=NO)
+        reason_not_drawn = self.exists(
+            model='subjectrequisition',
+            subject_identifier=visit.subject_identifier,
+            report_datetime=visit.report_datetime,
+            field_name='reason_not_drawn',
+            value='collection_failed')
+        return panel_name and is_drawn and reason_not_drawn
 
     def func_requires_hivuntested(self, visit, **kwargs):
         """Only for ESS."""
-        model_cls = self.get_model('hivtestinghistory')
-        try:
-            obj = model_cls.objects.get(subject_visit=visit)
-        except model_cls.DoesNotExist:
-            pass
-        else:
-            if obj and obj.has_tested == NO:
-                return True
-        return False
+        return self.exists(
+            model='hivtestinghistory',
+            subject_identifier=visit.subject_identifier,
+            report_datetime__lte=visit.report_datetime,
+            field_name='has_tested',
+            value=NO)
 
     def func_requires_hivtestreview(self, visit, **kwargs):
         """Only for ESS."""
-        model_cls = self.get_model('hivtestinghistory')
-        try:
-            obj = model_cls.objects.get(
-                subject_visit=visit)
-        except model_cls.DoesNotExist:
-            pass
-        else:
-            if obj and obj.has_record == YES:
-                return True
-        return False
+        return self.exists(
+            model='hivtestinghistory',
+            subject_identifier=visit.subject_identifier,
+            report_datetime__lte=visit.report_datetime,
+            field_name='has_record',
+            value=YES)
 
     def func_anonymous_member(self, visit, **kwargs):
-        model_cls = self.get_model('householdmember')
-        try:
-            household_member = model_cls.objects.get(
-                subject_identifier=visit.subject_identifier)
-            return household_member.anonymous
-        except model_cls.DoesNotExist:
-            return False
-        except model_cls.MultipleObjectsReturned:
-            return False
+        values = self.exists(
+            model='anonymousconsent',
+            subject_identifier=visit.subject_identifier,
+            field_name='consent_datetime')
+        return [v for v in values if v is not None]
 
     def func_requires_hivlinkagetocare(self, visit, **kwargs):
         """Returns True if participant is a defaulter now or at baseline,
@@ -165,7 +155,7 @@ class Predicates(PredicateCollection):
 
         Not required for last survey / bcpp-year-3.
         """
-        if visit.survey_schedule_object.name == BCPP_YEAR_3:
+        if visit.survey_schedule == BCPP_YEAR_3:
             return False
         status_helper = StatusHelper(visit=visit)
         return (status_helper.final_hiv_status == NEG
@@ -175,17 +165,10 @@ class Predicates(PredicateCollection):
         """Returns True to trigger the Microtube requisition if one is
         """
         # TODO: verify this
-        model_cls = self.get_model('hivresult')
         status_helper = StatusHelper(visit=visit)
-        try:
-            hiv_result = model_cls.objects.get(subject_visit=visit)
-        except model_cls.DoesNotExist:
-            today_hiv_result = None
-        else:
-            today_hiv_result = hiv_result.hiv_result
         return (
             status_helper.final_hiv_status != POS
-            and not today_hiv_result)
+            and not status_helper.current.today_hiv_result)
 
     def func_hiv_positive(self, visit, **kwargs):
         """Returns True if the participant is known or newly
@@ -196,7 +179,10 @@ class Predicates(PredicateCollection):
     def func_requires_circumcision(self, visit, **kwargs):
         """Return True if male is not reported as circumcised.
         """
-        if visit.household_member.gender == FEMALE:
+        # TODO: we dont need to circumcise if POS??
+        registered_subject = RegisteredSubject.objects.get(
+            subject_identifier=visit.subject_identifier)
+        if registered_subject.gender == FEMALE:
             return False
         return not self.is_circumcised(visit)
 
