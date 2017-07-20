@@ -309,3 +309,51 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_art_defaulter(self.subject_visits[0]))
         self.assertTrue(pc.func_art_defaulter(self.subject_visits[1]))
         self.assertTrue(pc.func_art_defaulter(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_art_naive(self):
+        pc = Predicates()
+        self.assertFalse(pc.func_art_naive(self.subject_visits[0]))
+        self.assertFalse(pc.func_art_naive(self.subject_visits[1]))
+        self.assertFalse(pc.func_art_naive(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_art_naive_true1(self):
+        pc = Predicates()
+        self.prepare_art_status(visit=self.subject_visits[0], naive=True)
+        self.assertTrue(pc.func_art_naive(self.subject_visits[0]))
+        self.assertTrue(pc.func_art_naive(self.subject_visits[1]))
+        self.assertTrue(pc.func_art_naive(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_art_naive_true2(self):
+        pc = Predicates()
+        self.prepare_art_status(visit=self.subject_visits[1], naive=True)
+        self.prepare_art_status(visit=self.subject_visits[2], naive=True)
+        self.assertFalse(pc.func_art_naive(self.subject_visits[0]))
+        self.assertTrue(pc.func_art_naive(self.subject_visits[1]))
+        self.assertTrue(pc.func_art_naive(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_on_art(self):
+        pc = Predicates()
+        self.assertFalse(pc.func_on_art(self.subject_visits[0]))
+        self.assertFalse(pc.func_on_art(self.subject_visits[1]))
+        self.assertFalse(pc.func_on_art(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_on_art_true1(self):
+        pc = Predicates()
+        self.prepare_art_status(visit=self.subject_visits[0], on_art=True)
+        self.assertTrue(pc.func_on_art(self.subject_visits[0]))
+        self.assertTrue(pc.func_on_art(self.subject_visits[1]))
+        self.assertTrue(pc.func_on_art(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_on_art_true2(self):
+        pc = Predicates()
+        self.prepare_art_status(visit=self.subject_visits[1], on_art=True)
+        self.prepare_art_status(visit=self.subject_visits[2], on_art=True)
+        self.assertFalse(pc.func_on_art(self.subject_visits[0]))
+        self.assertTrue(pc.func_on_art(self.subject_visits[1]))
+        self.assertTrue(pc.func_on_art(self.subject_visits[2]))
