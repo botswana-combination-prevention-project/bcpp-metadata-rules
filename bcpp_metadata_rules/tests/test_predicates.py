@@ -357,3 +357,66 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         self.assertFalse(pc.func_on_art(self.subject_visits[0]))
         self.assertTrue(pc.func_on_art(self.subject_visits[1]))
         self.assertTrue(pc.func_on_art(self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_todays_hiv_result(self):
+        pc = Predicates()
+        self.assertTrue(pc.func_requires_todays_hiv_result(
+            self.subject_visits[0]))
+        self.assertTrue(pc.func_requires_todays_hiv_result(
+            self.subject_visits[1]))
+        self.assertTrue(pc.func_requires_todays_hiv_result(
+            self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_todays_hiv_result1(self):
+        pc = Predicates()
+        self.prepare_hiv_status(visit=self.subject_visits[0], result=NEG)
+        self.assertTrue(pc.func_requires_todays_hiv_result(
+            self.subject_visits[0]))
+        self.assertTrue(pc.func_requires_todays_hiv_result(
+            self.subject_visits[1]))
+        self.assertTrue(pc.func_requires_todays_hiv_result(
+            self.subject_visits[2]))
+
+    @tag('1')
+    def test_func_requires_todays_hiv_result2(self):
+        pc = Predicates()
+        self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
+        self.assertFalse(pc.func_requires_todays_hiv_result(
+            self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_todays_hiv_result(
+            self.subject_visits[1]))
+        self.assertFalse(pc.func_requires_todays_hiv_result(
+            self.subject_visits[2]))
+
+    @tag('2')
+    def test_func_requires_pima_cd4(self):
+        pc = Predicates()
+        self.prepare_art_status(
+            visit=self.subject_visits[0], naive=True, result=POS)
+        self.assertTrue(pc.func_requires_pima_cd4(self.subject_visits[0]))
+
+    @tag('2')
+    def test_func_requires_pima_cd4_1(self):
+        pc = Predicates()
+        self.prepare_art_status(
+            visit=self.subject_visits[0], naive=True, result=POS)
+        self.assertTrue(pc.func_requires_pima_cd4(self.subject_visits[0]))
+        self.assertTrue(pc.func_requires_pima_cd4(self.subject_visits[1]))
+
+    @tag('2')
+    def test_func_requires_pima_cd4_2(self):
+        pc = Predicates()
+        self.prepare_art_status(
+            visit=self.subject_visits[0], on_art=True)
+        self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[1]))
+
+    @tag('2')
+    def test_func_requires_pima_cd4_3(self):
+        pc = Predicates()
+        self.prepare_art_status(
+            visit=self.subject_visits[0], defaulter=True)
+        self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[0]))
+        self.assertFalse(pc.func_requires_pima_cd4(self.subject_visits[1]))
