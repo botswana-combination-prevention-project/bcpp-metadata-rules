@@ -1,9 +1,10 @@
 from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND, NOT_SURE
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_metadata.rules import CrfRule, CrfRuleGroup
-from edc_metadata.rules import P, PF, register
-from edc_metadata.rules import RequisitionRule, RequisitionRuleGroup
-from bcpp_labs.labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel
+from bcpp_labs.labs import (
+    microtube_panel, rdb_panel, viral_load_panel, elisa_panel)
+from edc_metadata_rules import (
+    CrfRuleGroup, CrfRule, RequisitionRuleGroup,
+    register, RequisitionRule, P, PF)
 
 from .predicates import Predicates
 

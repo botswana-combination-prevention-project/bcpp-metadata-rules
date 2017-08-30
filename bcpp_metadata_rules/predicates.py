@@ -1,10 +1,10 @@
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
-from edc_metadata.rules import PredicateCollection
 from edc_registration.models import RegisteredSubject
 
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
 from bcpp_status.status_helper import StatusHelper
+from edc_metadata_rules import PredicateCollection
 
 
 class Predicates(PredicateCollection):
