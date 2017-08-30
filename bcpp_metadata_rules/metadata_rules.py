@@ -63,7 +63,7 @@ class SubjectVisitRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.hivlinkagetocare'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
 
 
 class VisitRequisitionRuleGroup(RequisitionRuleGroup):
@@ -86,7 +86,7 @@ class VisitRequisitionRuleGroup(RequisitionRuleGroup):
         target_panels=[rdb_panel], )
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         requisition_model = f'{app_label}.subjectrequisition'
 
 
@@ -106,7 +106,7 @@ class ResourceUtilizationRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.hospitaladmission'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.resourceutilization'
 
 
@@ -165,7 +165,7 @@ class HivTestingHistoryRuleGroup(CrfRuleGroup):
         return True
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivtestinghistory'
 
 
@@ -193,7 +193,7 @@ class ReviewPositiveRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.hivresult'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivtestreview'
 
 
@@ -219,7 +219,7 @@ class HivCareAdherenceRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.hivresult'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivcareadherence'
 
 
@@ -255,7 +255,7 @@ class SexualBehaviourRuleGroup(CrfRuleGroup):
                        f'{app_label}.nonpregnancy'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.sexualbehaviour'
 
 
@@ -275,7 +275,7 @@ class CircumcisionRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.uncircumcised'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.circumcision'
 
 
@@ -299,7 +299,7 @@ class ReproductiveRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.nonpregnancy'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.reproductivehealth'
 
 
@@ -327,7 +327,7 @@ class MedicalDiagnosesRuleGroup(CrfRuleGroup):
         target_models=[f'{app_label}.tuberculosis'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.medicaldiagnoses'
 
 
@@ -390,7 +390,7 @@ class CrfRuleGroup1(BaseCrfRuleGroup):
         target_models=[f'{app_label}.elisahivresult'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivresult'
 
 
@@ -406,7 +406,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         target_panels=[elisa_panel])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivresult'
         requisition_model = f'{app_label}.subjectrequisition'
 
@@ -422,7 +422,7 @@ class CrfRuleGroup2(BaseCrfRuleGroup):
                        f'{app_label}.hivmedicalcare'])
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivtestinghistory'
 
 
@@ -430,7 +430,7 @@ class CrfRuleGroup2(BaseCrfRuleGroup):
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivtestinghistory'
         requisition_model = f'{app_label}.subjectrequisition'
 
@@ -439,7 +439,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 class CrfRuleGroup3(BaseCrfRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivtestreview'
 
 
@@ -447,7 +447,7 @@ class CrfRuleGroup3(BaseCrfRuleGroup):
 class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivtestreview'
         requisition_model = f'{app_label}.subjectrequisition'
 
@@ -456,7 +456,7 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 class CrfRuleGroup4(BaseCrfRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivresultdocumentation'
 
 
@@ -464,7 +464,7 @@ class CrfRuleGroup4(BaseCrfRuleGroup):
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.hivresultdocumentation'
         requisition_model = f'{app_label}.subjectrequisition'
 
@@ -473,7 +473,7 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 class CrfRuleGroup5(BaseCrfRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.elisahivresult'
 
 
@@ -481,7 +481,7 @@ class CrfRuleGroup5(BaseCrfRuleGroup):
 class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
 
     class Meta:
-        app_label = 'bcpp_metadata_rules'
+        app_label = app_label
         source_model = f'{app_label}.elisahivresult'
         requisition_model = f'{app_label}.subjectrequisition'
 
