@@ -1,10 +1,10 @@
-from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
-from edc_registration.models import RegisteredSubject
-
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
 from bcpp_status.status_helper import StatusHelper
+from decimal import Decimal
+from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_metadata_rules import PredicateCollection
+from edc_registration.models import RegisteredSubject
 
 
 class Predicates(PredicateCollection):
@@ -44,7 +44,12 @@ class Predicates(PredicateCollection):
             subject_identifier=visit.subject_identifier,
             report_datetime=visit.report_datetime,
             field_name='last_year_partners')
-        return (values[0] or 0) >= partner_count
+        value = values[0] or 0
+        try:
+            value = int(value)
+        except ValueError:
+            value = int(Decimal(value))
+        return value >= partner_count
 
     def func_requires_recent_partner(self, visit, **kwargs):
         return self._has_last_year_partners(visit, partner_count=1)
