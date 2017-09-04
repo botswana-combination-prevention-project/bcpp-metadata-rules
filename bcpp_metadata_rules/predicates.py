@@ -1,6 +1,6 @@
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
-from bcpp_status.status_helper import StatusHelper
+from bcpp_status.status_db_helper import StatusDbHelper
 from decimal import Decimal
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_metadata_rules import PredicateCollection
@@ -11,6 +11,7 @@ class Predicates(PredicateCollection):
 
     app_label = 'bcpp_subject'
     visit_model = 'bcpp_subject.subjectvisit'
+    status_helper_cls = StatusDbHelper
 
     def is_circumcised(self, visit):
         """Returns True if circumcised before or at visit
@@ -112,7 +113,7 @@ class Predicates(PredicateCollection):
         """Returns True if participant is a defaulter now or at baseline,
         is naive now or at baseline.
         """
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         if status_helper.defaulter_at_baseline:
             return True
         elif status_helper.naive_at_baseline:
@@ -122,22 +123,22 @@ class Predicates(PredicateCollection):
     def func_art_defaulter(self, visit, **kwargs):
         """Returns True is a participant is a defaulter.
         """
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return status_helper.final_arv_status == DEFAULTER
 
     def func_art_naive(self, visit, **kwargs):
         """Returns True if the participant art naive.
         """
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return status_helper.final_arv_status == NAIVE
 
     def func_on_art(self, visit, **kwargs):
         """Returns True if the participant is on art.
         """
-        return StatusHelper(visit=visit).final_arv_status == ON_ART
+        return self.status_helper_cls(visit=visit).final_arv_status == ON_ART
 
     def func_requires_todays_hiv_result(self, visit, **kwargs):
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return status_helper.final_hiv_status != POS
 
     def func_requires_pima_cd4(self, visit, **kwargs):
@@ -145,7 +146,7 @@ class Predicates(PredicateCollection):
 
         Note: if naive at baseline, is also required.
         """
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return (status_helper.final_hiv_status == POS
                 and (status_helper.final_arv_status == NAIVE
                      or status_helper.naive_at_baseline))
@@ -153,7 +154,7 @@ class Predicates(PredicateCollection):
     def func_known_hiv_pos(self, visit, **kwargs):
         """Returns True if participant is NOT newly diagnosed POS.
         """
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return status_helper.known_positive
 
     def func_requires_hic_enrollment(self, visit, **kwargs):
@@ -164,7 +165,7 @@ class Predicates(PredicateCollection):
         """
         if visit.survey_schedule == BCPP_YEAR_3:
             return False
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return (status_helper.final_hiv_status == NEG
                 and not self.is_hic_enrolled(visit))
 
@@ -172,16 +173,16 @@ class Predicates(PredicateCollection):
         """Returns True to trigger the Microtube requisition if one is
         """
         # TODO: verify this
-        status_helper = StatusHelper(visit=visit)
+        status_helper = self.status_helper_cls(visit=visit)
         return (
             status_helper.final_hiv_status != POS
-            and not status_helper.current.today_hiv_result)
+            and not status_helper.current_hiv_result)
 
     def func_hiv_positive(self, visit, **kwargs):
         """Returns True if the participant is known or newly
         diagnosed HIV positive.
         """
-        return StatusHelper(visit=visit).final_hiv_status == POS
+        return self.status_helper_cls(visit=visit).final_hiv_status == POS
 
     def func_requires_circumcision(self, visit, **kwargs):
         """Return True if male is not reported as circumcised.
@@ -196,13 +197,13 @@ class Predicates(PredicateCollection):
     def func_requires_rbd(self, visit, **kwargs):
         """Returns True if subject is POS.
         """
-        if StatusHelper(visit=visit).final_hiv_status == POS:
+        if self.status_helper_cls(visit=visit).final_hiv_status == POS:
             return True
         return False
 
     def func_requires_vl(self, visit, **kwargs):
         """Returns True if subject is POS.
         """
-        if StatusHelper(visit=visit).final_hiv_status == POS:
+        if self.status_helper_cls(visit=visit).final_hiv_status == POS:
             return True
         return False
