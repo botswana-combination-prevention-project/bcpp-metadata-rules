@@ -1,7 +1,6 @@
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
 from bcpp_status.status_db_helper import StatusDbHelper
-from bcpp_status.status_helper import StatusHelper
 from decimal import Decimal
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_metadata_rules import PredicateCollection
@@ -12,7 +11,7 @@ class Predicates(PredicateCollection):
 
     app_label = 'bcpp_subject'
     visit_model = 'bcpp_subject.subjectvisit'
-    status_helper_cls = StatusHelper
+    status_helper_cls = StatusDbHelper
 
     def is_circumcised(self, visit):
         """Returns True if circumcised before or at visit
