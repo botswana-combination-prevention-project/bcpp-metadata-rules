@@ -12,7 +12,7 @@ class Predicates(PredicateCollection):
 
     app_label = 'bcpp_subject'
     visit_model = 'bcpp_subject.subjectvisit'
-    status_helper_cls = StatusDbHelper
+    status_helper_cls = StatusHelper
 
     def is_circumcised(self, visit):
         """Returns True if circumcised before or at visit
