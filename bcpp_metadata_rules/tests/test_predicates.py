@@ -1,7 +1,6 @@
 from arrow.arrow import Arrow
 from bcpp_community.surveys import BCPP_YEAR_2, BCPP_YEAR_3
 from bcpp_metadata_rules.predicates import Predicates
-from bcpp_status.models import StatusHistory
 from bcpp_status.status_helper import StatusHelper
 from bcpp_status.tests import StatusHelperTestMixin
 from datetime import datetime
@@ -54,10 +53,10 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             report_datetime=report_datetime + relativedelta(years=2), timepoint='T2')
 
     def run_metadata_rule(self, func, visit=None):
-        """Updates status history before running rules.
+        """Updates status history before running func or rule.
 
         Simulates the method that runs metadata rules that is
-        called in the signal.
+        called in the metadata signal.
         """
         StatusHelper(visit=visit, update_history=True)
         return func(visit)
