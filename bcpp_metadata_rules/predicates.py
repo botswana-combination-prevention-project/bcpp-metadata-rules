@@ -1,6 +1,7 @@
 from bcpp_community.surveys import BCPP_YEAR_3
 from bcpp_labs.constants import MICROTUBE
 from bcpp_status.status_db_helper import StatusDbHelper
+from bcpp_status.status_helper import StatusHelper
 from decimal import Decimal
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_metadata_rules import PredicateCollection
@@ -176,7 +177,7 @@ class Predicates(PredicateCollection):
         status_helper = self.status_helper_cls(visit=visit)
         return (
             status_helper.final_hiv_status != POS
-            and not status_helper.current_hiv_result)
+            and not status_helper.current.today_hiv_result)
 
     def func_hiv_positive(self, visit, **kwargs):
         """Returns True if the participant is known or newly
