@@ -384,7 +384,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             self.run_metadata_rule(
                 pc.func_art_defaulter, self.subject_visits[2]))
 
-    @tag('4')
     def test_func_art_defaulter_true1(self):
         pc = Predicates()
         self.prepare_art_status(visit=self.subject_visits[0], defaulter=True)
@@ -488,7 +487,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             self.run_metadata_rule(
                 pc.func_on_art, self.subject_visits[2]))
 
-    @tag('2')
     def test_func_requires_todays_hiv_result(self):
         pc = Predicates()
         self.assertTrue(
@@ -682,14 +680,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             self.run_metadata_rule(
                 pc.func_requires_circumcision, self.subject_visits[0]))
 
-    @tag('11')
     def test_func_requires_microtube(self):
         pc = Predicates()
         self.assertTrue(
             self.run_metadata_rule(
                 pc.func_requires_microtube, self.subject_visits[0]))
 
-    @tag('11')
     def test_func_requires_microtube1(self):
         pc = Predicates()
         # hivtestreview
@@ -703,7 +699,6 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             self.run_metadata_rule(
                 pc.func_requires_microtube, self.subject_visits[0]))
 
-    @tag('11')
     def test_func_requires_microtube2(self):
         pc = Predicates()
         # hivtestreview
@@ -717,13 +712,68 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
             self.run_metadata_rule(
                 pc.func_requires_microtube, self.subject_visits[0]))
 
-    @tag('11')
-    def test_func_requires_microtube3(self):
+    def test_func_not_requires_microtube_at_baseline_known_pos(self):
         pc = Predicates()
-        self.prepare_hiv_status(visit=self.subject_visits[0], result=POS)
+        self.prepare_known_positive(self.subject_visits[0])
         self.assertFalse(
             self.run_metadata_rule(
                 pc.func_requires_microtube, self.subject_visits[0]))
+
+    def test_func_not_requires_microtube_known_pos(self):
+        pc = Predicates()
+        self.prepare_known_positive(self.subject_visits[0])
+        self.assertFalse(
+            self.run_metadata_rule(
+                pc.func_requires_microtube, self.subject_visits[1]))
+
+    def test_func_requires_microtube_baseline_neg_interim_neg(self):
+        pc = Predicates()
+        # hivtestreview
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='hivtestreview',
+            visit_code=self.subject_visits[0].visit_code,
+            recorded_hiv_result=NEG,
+            hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[1].report_datetime,
+            model='hivtestreview',
+            visit_code=self.subject_visits[1].visit_code,
+            recorded_hiv_result=NEG,
+            hiv_test_date=(self.subject_visits[1].report_datetime - relativedelta(days=50)).date())
+        self.assertTrue(
+            self.run_metadata_rule(
+                pc.func_requires_microtube, self.subject_visits[1]))
+
+    def test_func_not_requires_microtube_if_baseline_pos(self):
+        pc = Predicates()
+        # hivtestreview
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[0].report_datetime,
+            model='hivtestreview',
+            visit_code=self.subject_visits[0].visit_code,
+            recorded_hiv_result=POS,
+            hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
+        self.reference_helper.create_for_model(
+            report_datetime=self.subject_visits[1].report_datetime,
+            model='hivtestreview',
+            visit_code=self.subject_visits[1].visit_code,
+            recorded_hiv_result=POS,
+            hiv_test_date=(self.subject_visits[1].report_datetime - relativedelta(days=50)).date())
+        self.assertFalse(
+            self.run_metadata_rule(
+                pc.func_requires_microtube, self.subject_visits[1]))
+
+    def test_func_requires_microtube_for_neg_regardless_of_interim_pos(self):
+        pc = Predicates()
+        # neg at baseline
+        self.prepare_hiv_status(visit=self.subject_visits[0], result=NEG)
+        # tested POS during the year
+        self.prepare_interim_pos(visit=self.subject_visits[1])
+        # still required
+        self.assertTrue(
+            self.run_metadata_rule(
+                pc.func_requires_microtube, self.subject_visits[1]))
 
     def test_func_hiv_positive(self):
         pc = Predicates()

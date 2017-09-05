@@ -170,13 +170,11 @@ class Predicates(PredicateCollection):
                 and not self.is_hic_enrolled(visit))
 
     def func_requires_microtube(self, visit, **kwargs):
-        """Returns True to trigger the Microtube requisition if one is
+        """Returns True to trigger the Microtube requisition
+        if not POS.
         """
-        # TODO: verify this
         status_helper = self.status_helper_cls(visit=visit)
-        return (
-            status_helper.final_hiv_status != POS
-            and not status_helper.current.today_hiv_result)
+        return status_helper.final_hiv_status != POS
 
     def func_hiv_positive(self, visit, **kwargs):
         """Returns True if the participant is known or newly
