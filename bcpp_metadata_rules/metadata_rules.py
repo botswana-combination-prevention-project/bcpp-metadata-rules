@@ -1,5 +1,4 @@
-from bcpp_labs.labs import microtube_panel, rdb_panel
-from bcpp_labs.labs import venous_panel, viral_load_panel, elisa_panel
+from bcpp_labs.labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
 from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND, NOT_SURE
 from edc_metadata import NOT_REQUIRED, REQUIRED
 from edc_metadata_rules import CrfRuleGroup, CrfRule, RequisitionRuleGroup
@@ -497,19 +496,3 @@ class CrfRuleGroup6(BaseCrfRuleGroup):
 
     class Meta:
         source_model = f'{app_label}.subjectrequisition'
-
-
-@register()
-class RequisitionRuleGroup6(RequisitionRuleGroup):
-
-    venous_for_vol = RequisitionRule(
-        predicate=pc.func_requires_venous,
-        consequence=REQUIRED,
-        alternative=NOT_REQUIRED,
-        source_panel=microtube_panel,
-        target_panels=[venous_panel])
-
-    class Meta:
-        app_label = app_label
-        source_model = f'{app_label}.subjectrequisition'
-        requisition_model = f'{app_label}.subjectrequisition'
