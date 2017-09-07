@@ -7,7 +7,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_constants.constants import NEG, POS, YES, NO, MALE, FEMALE
-from edc_reference import LongitudinalRefset
+from edc_reference import LongitudinalRefset, get_reference_name
 from edc_reference.tests import ReferenceTestHelper
 from edc_registration.models import RegisteredSubject
 
@@ -33,6 +33,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
     reference_helper_cls = MyReferenceTestHelper
     visit_model = 'bcpp_subject.subjectvisit'
     reference_model = 'edc_reference.reference'
+    app_label = 'bcpp_subject'
 
     def setUp(self):
         self.subject_identifier = '111111111'
@@ -66,7 +67,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         return LongitudinalRefset(
             subject_identifier=self.subject_identifier,
             visit_model=self.visit_model,
-            model=self.visit_model,
+            name=self.visit_model,
             reference_model_cls=self.reference_model
         ).order_by('report_datetime')
 
@@ -78,7 +79,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             visit_code=self.subject_visits[0].visit_code,
             circumcised=YES)
         self.assertTrue(pc.is_circumcised(self.subject_visits[0]))
@@ -87,7 +88,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             visit_code=self.subject_visits[0].visit_code,
             circumcised=NO)
         self.assertFalse(pc.is_circumcised(self.subject_visits[0]))
@@ -96,12 +97,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             visit_code=self.subject_visits[0].visit_code,
             circumcised=NO)
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[1].report_datetime,
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             visit_code=self.subject_visits[1].visit_code,
             circumcised=YES)
         self.assertFalse(pc.is_circumcised(self.subject_visits[0]))
@@ -113,12 +114,12 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             visit_code=self.subject_visits[0].visit_code,
             circumcised=YES)
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[1].report_datetime,
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             visit_code=self.subject_visits[1].visit_code,
             circumcised=NO)
         self.assertTrue(pc.is_circumcised(self.subject_visits[0]))
@@ -128,7 +129,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hicenrollment',
+            reference_name=f'{self.app_label}.hicenrollment',
             visit_code=self.subject_visits[0].visit_code,
             hic_permission=YES)
         self.assertTrue(pc.is_hic_enrolled(self.subject_visits[0]))
@@ -139,7 +140,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hicenrollment',
+            reference_name=f'{self.app_label}.hicenrollment',
             visit_code=self.subject_visits[0].visit_code,
             hic_permission=NO)
         self.assertFalse(pc.is_hic_enrolled(self.subject_visits[0]))
@@ -189,7 +190,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='sexualbehaviour',
+            reference_name=f'{self.app_label}.sexualbehaviour',
             visit_code=self.subject_visits[0].visit_code,
             last_year_partners=0)
         self.assertFalse(
@@ -209,7 +210,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='sexualbehaviour',
+            reference_name=f'{self.app_label}.sexualbehaviour',
             visit_code=self.subject_visits[0].visit_code,
             last_year_partners=1)
 
@@ -240,7 +241,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='sexualbehaviour',
+            reference_name=f'{self.app_label}.sexualbehaviour',
             visit_code=self.subject_visits[0].visit_code,
             last_year_partners=2)
 
@@ -275,7 +276,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='sexualbehaviour',
+            reference_name=f'{self.app_label}.sexualbehaviour',
             visit_code=self.subject_visits[0].visit_code,
             last_year_partners=3)
         self.assertTrue(
@@ -612,7 +613,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hivtestinghistory',
+            reference_name=f'{self.app_label}.hivtestinghistory',
             visit_code=self.subject_visits[0].visit_code,
             has_tested=NO)
         self.assertTrue(
@@ -630,7 +631,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hivtestinghistory',
+            reference_name=f'{self.app_label}.hivtestinghistory',
             visit_code=self.subject_visits[0].visit_code,
             has_record=YES)
         self.assertTrue(
@@ -647,7 +648,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='anonymousconsent',
+            reference_name=f'{self.app_label}.anonymousconsent',
             visit_code=self.subject_visits[0].visit_code,
             consent_datetime=self.subject_visits[0].report_datetime)
         self.assertTrue(
@@ -691,7 +692,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         # hivtestreview
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hivtestreview',
+            reference_name=f'{self.app_label}.hivtestreview',
             visit_code=self.subject_visits[0].visit_code,
             recorded_hiv_result=NEG,
             hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
@@ -704,7 +705,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         # hivtestreview
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hivtestreview',
+            reference_name=f'{self.app_label}.hivtestreview',
             visit_code=self.subject_visits[0].visit_code,
             recorded_hiv_result=POS,
             hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
@@ -731,13 +732,13 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         # hivtestreview
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hivtestreview',
+            reference_name=f'{self.app_label}.hivtestreview',
             visit_code=self.subject_visits[0].visit_code,
             recorded_hiv_result=NEG,
             hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[1].report_datetime,
-            model='hivtestreview',
+            reference_name=f'{self.app_label}.hivtestreview',
             visit_code=self.subject_visits[1].visit_code,
             recorded_hiv_result=NEG,
             hiv_test_date=(self.subject_visits[1].report_datetime - relativedelta(days=50)).date())
@@ -750,13 +751,13 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         # hivtestreview
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='hivtestreview',
+            reference_name=f'{self.app_label}.hivtestreview',
             visit_code=self.subject_visits[0].visit_code,
             recorded_hiv_result=POS,
             hiv_test_date=(self.subject_visits[0].report_datetime - relativedelta(days=50)).date())
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[1].report_datetime,
-            model='hivtestreview',
+            reference_name=f'{self.app_label}.hivtestreview',
             visit_code=self.subject_visits[1].visit_code,
             recorded_hiv_result=POS,
             hiv_test_date=(self.subject_visits[1].report_datetime - relativedelta(days=50)).date())
@@ -786,7 +787,8 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='subjectrequisition',
+            reference_name=get_reference_name(
+                f'{self.app_label}.subjectrequisition', MICROTUBE),
             visit_code=self.subject_visits[0].visit_code,
             panel_name=MICROTUBE,
             is_drawn=NO,
@@ -799,7 +801,8 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
         pc = Predicates()
         self.reference_helper.create_for_model(
             report_datetime=self.subject_visits[0].report_datetime,
-            model='subjectrequisition',
+            reference_name=get_reference_name(
+                f'{self.app_label}.subjectrequisition', MICROTUBE),
             visit_code=self.subject_visits[0].visit_code,
             panel_name=MICROTUBE,
             is_drawn=YES,
@@ -818,7 +821,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
     def test_func_requires_hic_enrollment2(self):
         pc = Predicates()
         self.reference_helper.update_for_model(
-            model='subjectvisit',
+            reference_name=f'{self.app_label}.subjectvisit',
             report_datetime=self.subject_visits[0].report_datetime,
             visit_code=self.subject_visits[0].visit_code,
             valueset=[('survey_schedule', 'CharField', BCPP_YEAR_2)])
@@ -831,7 +834,7 @@ class TestPredicates(StatusHelperTestMixin, TestCase):
     def test_func_requires_hic_enrollment3(self):
         pc = Predicates()
         self.reference_helper.update_for_model(
-            model='subjectvisit',
+            reference_name=f'{self.app_label}.subjectvisit',
             report_datetime=self.subject_visits[0].report_datetime,
             visit_code=self.subject_visits[0].visit_code,
             valueset=[('survey_schedule', 'CharField', BCPP_YEAR_3)])

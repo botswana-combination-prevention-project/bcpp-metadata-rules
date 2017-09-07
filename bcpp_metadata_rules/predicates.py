@@ -5,6 +5,7 @@ from decimal import Decimal
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_metadata_rules import PredicateCollection
 from edc_registration.models import RegisteredSubject
+from edc_reference import get_reference_name
 
 
 class Predicates(PredicateCollection):
@@ -18,7 +19,7 @@ class Predicates(PredicateCollection):
         report datetime.
         """
         return self.exists(
-            model='circumcision',
+            reference_name=f'{self.app_label}.circumcision',
             subject_identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
             field_name='circumcised',
@@ -28,7 +29,7 @@ class Predicates(PredicateCollection):
         """Returns True if subject is enrolled to Hic.
         """
         return self.exists(
-            model='hicenrollment',
+            reference_name=f'{self.app_label}.hicenrollment',
             subject_identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
             field_name='hic_permission',
@@ -41,7 +42,7 @@ class Predicates(PredicateCollection):
 
     def _has_last_year_partners(self, visit, partner_count=None):
         values = self.exists(
-            model='sexualbehaviour',
+            reference_name=f'{self.app_label}.sexualbehaviour',
             subject_identifier=visit.subject_identifier,
             report_datetime=visit.report_datetime,
             field_name='last_year_partners')
@@ -62,20 +63,22 @@ class Predicates(PredicateCollection):
         return self._has_last_year_partners(visit, partner_count=3)
 
     def func_requires_venous(self, visit, **kwargs):
+        reference_name = get_reference_name(
+            f'{self.app_label}.subjectrequisition', MICROTUBE)
         panel_name = self.exists(
-            model='subjectrequisition',
+            reference_name=reference_name,
             subject_identifier=visit.subject_identifier,
             report_datetime=visit.report_datetime,
             field_name='panel_name',
             value=MICROTUBE)
         is_drawn = self.exists(
-            model='subjectrequisition',
+            reference_name=reference_name,
             subject_identifier=visit.subject_identifier,
             report_datetime=visit.report_datetime,
             field_name='is_drawn',
             value=NO)
         reason_not_drawn = self.exists(
-            model='subjectrequisition',
+            reference_name=reference_name,
             subject_identifier=visit.subject_identifier,
             report_datetime=visit.report_datetime,
             field_name='reason_not_drawn',
@@ -86,7 +89,7 @@ class Predicates(PredicateCollection):
         """Only for ESS."""
         # FIXME: make for ESS only
         return self.exists(
-            model='hivtestinghistory',
+            reference_name=f'{self.app_label}.hivtestinghistory',
             subject_identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
             field_name='has_tested',
@@ -96,7 +99,7 @@ class Predicates(PredicateCollection):
         """Only for ESS."""
         # FIXME: make for ESS only
         return self.exists(
-            model='hivtestinghistory',
+            reference_name=f'{self.app_label}.hivtestinghistory',
             subject_identifier=visit.subject_identifier,
             report_datetime__lte=visit.report_datetime,
             field_name='has_record',
@@ -104,7 +107,7 @@ class Predicates(PredicateCollection):
 
     def func_anonymous_member(self, visit, **kwargs):
         values = self.exists(
-            model='anonymousconsent',
+            reference_name=f'{self.app_label}.anonymousconsent',
             subject_identifier=visit.subject_identifier,
             field_name='consent_datetime')
         return [v for v in values if v is not None]
