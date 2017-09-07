@@ -370,6 +370,12 @@ class BaseRequisitionRuleGroup(RequisitionRuleGroup):
         alternative=NOT_REQUIRED,
         target_panels=[microtube_panel], )
 
+    venous = RequisitionRule(
+        predicate=pc.func_requires_venous,
+        consequence=REQUIRED,
+        alternative=NOT_REQUIRED,
+        target_panels=[venous_panel], )
+
     class Meta:
         abstract = True
 
