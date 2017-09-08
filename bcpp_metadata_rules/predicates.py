@@ -86,22 +86,18 @@ class Predicates(PredicateCollection):
         return panel_name and is_drawn and reason_not_drawn
 
     def func_requires_hivuntested(self, visit, **kwargs):
-        """Only for ESS."""
-        # FIXME: make for ESS only
         return self.exists(
             reference_name=f'{self.app_label}.hivtestinghistory',
             subject_identifier=visit.subject_identifier,
-            report_datetime__lte=visit.report_datetime,
+            report_datetime=visit.report_datetime,
             field_name='has_tested',
             value=NO)
 
     def func_requires_hivtestreview(self, visit, **kwargs):
-        """Only for ESS."""
-        # FIXME: make for ESS only
         return self.exists(
             reference_name=f'{self.app_label}.hivtestinghistory',
             subject_identifier=visit.subject_identifier,
-            report_datetime__lte=visit.report_datetime,
+            report_datetime=visit.report_datetime,
             field_name='has_record',
             value=YES)
 
