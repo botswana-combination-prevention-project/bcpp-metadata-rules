@@ -496,3 +496,20 @@ class CrfRuleGroup6(BaseCrfRuleGroup):
 
     class Meta:
         source_model = f'{app_label}.subjectrequisition'
+
+
+@register()
+class OutPatientCareRuleGroup(CrfRuleGroup):
+    """Allows the ceaopd forms to be made available
+    whether or not the participant has govt_health_care.
+    """
+
+    govt_health_care = CrfRule(
+        predicate=P('govt_health_care', 'eq', YES),
+        consequence=REQUIRED,
+        alternative=NOT_REQUIRED,
+        target_models=[f'{app_label}.ceaopd'])
+
+    class Meta:
+        app_label = app_label
+        source_model = f'{app_label}.outpatientcare'
